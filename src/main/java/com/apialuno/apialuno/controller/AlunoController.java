@@ -19,6 +19,8 @@ import com.apialuno.apialuno.service.AlunoService;
 
 import jakarta.validation.Valid;
 //import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 @RestController
@@ -35,6 +37,45 @@ public class AlunoController {
         }
         return new ResponseEntity<>(new AlunoModel(), HttpStatus.NOT_FOUND);
     }
+    
+    @GetMapping
+    public ResponseEntity<List<AlunoModel>> buscarTodos(){
+        List<AlunoModel> listaAluno = alunoService.buscarTodos();
+        return new ResponseEntity<>(listaAluno, HttpStatus.OK);
+    }
+
+    @GetMapping("/nome/{nomeEstudante}")
+    public ResponseEntity<List<AlunoModel>> buscarPorNome(@PathVariable(value = "nomeEstudante") String nomeEstudante){
+        List<AlunoModel> aluno = alunoService.buscarPorNome(nomeEstudante);
+        if (aluno.isEmpty()) {
+            return new ResponseEntity<>(aluno, HttpStatus.OK);
+        }
+        else {
+        return new ResponseEntity<List<AlunoModel>>(aluno, HttpStatus.NOT_FOUND);
+    }
+    }
+
+    @GetMapping("/curso/{curso}")
+    public ResponseEntity<List<AlunoModel>> buscarPorCurso(@PathVariable(value = "curso") String curso){
+        List<AlunoModel> aluno = alunoService.buscarPorCurso(curso);
+        if (aluno.isEmpty()) {
+            return new ResponseEntity<>(aluno, HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<List<AlunoModel>>(aluno, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/idade/{idade}")
+    public ResponseEntity<List<AlunoModel>> buscarPorIdade(@PathVariable(value = "idade") int idade){
+        List<AlunoModel> aluno = alunoService.buscarPorIdade(idade);
+        if (aluno.isEmpty()) {
+            return new ResponseEntity<>(aluno, HttpStatus.OK);
+        }
+        else{
+        return new ResponseEntity<List<AlunoModel>>(aluno, HttpStatus.NOT_FOUND);
+        }
+    }
 
     @PostMapping
     public ResponseEntity<String> salvar(@Valid @RequestBody AlunoModel aluno){
@@ -45,12 +86,6 @@ public class AlunoController {
             return new ResponseEntity<>(retorno, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @GetMapping
-    public ResponseEntity<List<AlunoModel>> buscarTodos(){
-        List<AlunoModel> listaAluno = alunoService.buscarTodos();
-        return new ResponseEntity<>(listaAluno, HttpStatus.OK);
-    }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarPorId(@PathVariable Long id){
@@ -58,13 +93,16 @@ public class AlunoController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
     }
 
-    @GetMapping("/nome/{nomeEstudante}")
-    public ResponseEntity<AlunoModel> buscarPorNome(@PathVariable(value = "nomeEstudante") String nomeEstudante){
-        Optional<AlunoModel> aluno = alunoService.buscarPorNome(nomeEstudante);
-        if (aluno.isPresent()) {
-            return new ResponseEntity<>(aluno.get(), HttpStatus.OK);
+    @PutMapping("/editar/{id}")
+    public ResponseEntity<AlunoModel> editarAluno(@PathVariable long id, @Valid @RequestBody AlunoModel aluno) {
+        Optional<AlunoModel> alunoEditavel = alunoService.buscarPorId(id);
+        if (alunoEditavel.isPresent()) {
+            AlunoModel alunoSalvo = aluno;
+            aluno.setIdPessoa(id);
+            alunoService.salvar(aluno);
+            return new ResponseEntity<AlunoModel>(alunoSalvo, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(new AlunoModel(), HttpStatus.NOT_FOUND);
     }
-
 }

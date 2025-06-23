@@ -25,8 +25,16 @@ public class AlunoService {
         return alunoRepository.findById(id);
     }
 
-    public Optional<AlunoModel> buscarPorNome(String nome){
+    public List<AlunoModel> buscarPorNome(String nome){
         return alunoRepository.findByNomeEstudante(nome);
+    }
+
+    public List<AlunoModel> buscarPorCurso(String curso){
+        return alunoRepository.findByCurso(curso);
+    }
+
+    public List<AlunoModel> buscarPorIdade(int idade){
+        return alunoRepository.findByIdade(idade);
     }
 
     //testando simplificado
