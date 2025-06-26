@@ -3,17 +3,21 @@ package com.apialuno.apialuno.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "idpessoa")
 @Table(name = "aluno")
 public class AlunoModel extends PessoaModel{
+    @NotBlank(message = "Campus não pode estar vazio")
     private String campus;
 	private String polo;
+    @NotBlank(message = "Email não pode estar vazio")
 	private String email_institucional;
 	private String coordenacao;
     private String curso;
 	private String situacao;
+    @NotBlank(message = "Periodo não pode estar vazio")
 	private String periodo_entrada;
 
     public AlunoModel() {}
